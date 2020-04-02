@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "770439231660",
+    "firebase_url": "https://therealsocialnetwork-c2b8e.firebaseio.com",
+    "project_id": "therealsocialnetwork-c2b8e",
+    "storage_bucket": "therealsocialnetwork-c2b8e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770439231660:android:918bea030932f3a2da0709",
+        "android_client_info": {
+          "package_name": "com.sanicorporation.therealsocialnetwork"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770439231660-bnqh53err7sq231k2hoaqe00bl3nd7p5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEGyedjBmJ6284e5CGCwWyv4fp0NMt2MY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770439231660-bnqh53err7sq231k2hoaqe00bl3nd7p5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "770439231660-ji9t22aj2vldpjmhskpiod8se1o7r94h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "sanicorporation.TheRealSocialNetwork"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

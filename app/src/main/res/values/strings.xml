@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">TheRealSocialNetwork</string>
+
+    <!--Login Activity-->
+    <string name="login_mail_hint">Ingrese email</string>
+    <string name="login_password_hint">Ingrese contraseña</string>
+
+
+    <!--Register Activity-->
+    <string name="register_mail_hint">Ingrese email</string>
+    <string name="register_password_hint">Ingrese contraseña</string>
+    <string name="register_confirmation_password_hint">Confirme contraseña</string>
+    
+    <!--AddPost Activity-->
+    <string name="addpost_title_hint">Título</string>
+    <string name="addpost_description_hint">Descripcion</string>
+    <string name="addpost_select_image_hint">Imagen</string>
+    <string name="addpost_share_button_text">Compartir</string>
+    <string name="addpost_successful_added_title">Exito</string>
+    <string name="addpost_successful_added_message">Se ha subido su post exitosamente!</string>
+    <string name="addpost_successful_added_button">Aceptar</string>
+
+    <!--Common actions-->
+    <string name="login_button_text">Ingresar</string>
+    <string name="register_button_text">Registrarse</string>
+    <string name="logout">Salir</string>
+    <string name="collection_post_name">posts</string>
+
+</resources>

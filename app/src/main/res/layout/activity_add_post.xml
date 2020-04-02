@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.sanicorporation.therealsocialnetwork.activities.add_post.AddPostViewModel" />
+        <variable
+            name="handler"
+            type="com.sanicorporation.therealsocialnetwork.activities.add_post.AddPostActivity" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activities.add_post.AddPostActivity">
+
+        <EditText
+            android:id="@+id/title_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@={viewmodel.title}"
+            android:hint="@string/addpost_title_hint"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constraintTop_toTopOf="parent"
+            android:lines="2"
+            android:maxLength="30"/>
+
+
+        <EditText
+            android:id="@+id/description_inpupt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/addpost_description_hint"
+            android:lines="5"
+            android:maxLength="30"
+            android:text="@={viewmodel.description}"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constraintTop_toBottomOf="@+id/title_input"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageView
+            android:id="@+id/post_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/confirm_button"
+            app:layout_constraintTop_toBottomOf="@id/description_inpupt"/>
+
+        <Button
+            android:id="@+id/confirm_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addpost_share_button_text"
+            android:onClick="@{() -> handler.onClickShare()}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/post_image"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
