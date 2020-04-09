@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -12,7 +12,7 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="LightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkLight</item>
@@ -23,22 +23,10 @@
     </style>
 
 
-    <!-- Base application theme. -->
-    <style name="AppTheme.NoBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <!-- Base application theme. -->
-    <style name="LightTheme.NoBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
 
 
 
-
-    <style name="SocialMediaButtons" parent="Widget.AppCompat.Button">
+    <style name="SocialMediaButtons" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">?attr/defaultTextAndIconsColor</item>
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:paddingLeft">@dimen/default_horizontal_button_padding</item>

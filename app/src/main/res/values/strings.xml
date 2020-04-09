@@ -19,11 +19,12 @@
     <string name="addpost_successful_added_title">Exito</string>
     <string name="addpost_successful_added_message">Se ha subido su post exitosamente!</string>
     <string name="addpost_successful_added_button">Aceptar</string>
+    <string name="addpost_dialog_take_photo">Tomar una foto</string>
+    <string name="addpost_dialog_open_gallery">Seleccionar imagen</string>
 
     <!--Common actions-->
     <string name="login_button_text">Ingresar</string>
     <string name="register_button_text">Registrarse</string>
     <string name="logout">Salir</string>
-    <string name="collection_post_name">posts</string>
 
 </resources>

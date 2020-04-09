@@ -13,4 +13,6 @@
     <dimen name="default_card_view_image_height">200sp</dimen>
     <dimen name="default_card_view_padding">10dp</dimen>
 
+    <!--Add Post Dialog-->
+    <dimen name="add_post_dialog_button_ratio">80dp</dimen>
 </resources>

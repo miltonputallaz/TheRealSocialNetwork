@@ -3,18 +3,35 @@
     package="com.sanicorporation.therealsocialnetwork">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
 
     <application
+        android:name=".CustomApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
+
         <activity android:name=".activities.add_post.AddPostActivity"></activity>
         <activity
             android:name=".activities.splash.SplashActivity"
-            android:theme="@style/AppTheme.NoBar">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,10 +41,9 @@
         <activity android:name=".activities.register.RegisterActivity" />
         <activity
             android:name=".activities.login.LoginActivity"
-            android:theme="@style/AppTheme.NoBar"></activity>
+            ></activity>
         <activity
             android:name=".activities.main.MainActivity"
-            android:theme="@style/AppTheme.NoBar"
             />
     </application>
 

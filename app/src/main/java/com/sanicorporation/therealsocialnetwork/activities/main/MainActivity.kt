@@ -2,16 +2,21 @@ package com.sanicorporation.therealsocialnetwork.activities.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.sanicorporation.therealsocialnetwork.R
 import com.sanicorporation.therealsocialnetwork.activities.add_post.AddPostActivity
 import com.sanicorporation.therealsocialnetwork.activities.login.LoginActivity
 import com.sanicorporation.therealsocialnetwork.databinding.ActivityMainBinding
 import com.sanicorporation.therealsocialnetwork.models.Post
+import com.sanicorporation.therealsocialnetwork.utils.Keys
+import com.sanicorporation.therealsocialnetwork.utils.Preferences
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,15 +24,41 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private var viewModel: MainViewModel = MainViewModel()
-    private var postAdapter: PostAdapter = PostAdapter(ArrayList())
+
+    private val likedHandler: (postId: String, liked: Boolean) -> Unit = { postId, liked ->
+        val uid = Preferences.INSTANCE.getString(this, Keys.UID.toString())
+        viewModel.performLike(uid, postId, liked)
+
+    }
+
+    private val getLikeHandler: (postId: String, (liked: Boolean) -> Unit) -> Unit = { postId, setLikeHandler ->
+        val uid = Preferences.INSTANCE.getString(this, Keys.UID.toString())
+       viewModel.performVerifyPostLiked(postId, uid, setLikeHandler)
+    }
+
+    private val selectedHandler: (post: Post) -> Unit = {
+        Log.d("","")
+    }
+
+    private val getImageHandler: (imageUri: String, imageView: ImageView) -> Unit = {uri, view ->
+        Glide.with(this).load(uri).into(view)
+    }
 
     private val logoutHandler: () -> Unit = {
+        Preferences.INSTANCE.clear(this)
         goToLogin()
     }
 
     private val postsSuccessfulHandler: (ArrayList<Post>) -> Unit = {
         postAdapter.setPosts(it)
+        binding.refresh.isRefreshing = false
     }
+
+    private var postAdapter: PostAdapter = PostAdapter(ArrayList(), likedHandler, selectedHandler, getLikeHandler, getImageHandler)
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +67,10 @@ class MainActivity : AppCompatActivity() {
         setUpToolbar()
         setUpBinding()
         setUpRecyclerView()
+    }
+
+    override fun onStart() {
+        super.onStart()
         getLastPosts()
     }
 
@@ -55,6 +90,9 @@ class MainActivity : AppCompatActivity() {
             layoutManager = viewManager
             adapter = postAdapter
         }
+        binding.refresh.setOnRefreshListener{
+            getLastPosts()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -64,8 +102,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getLastPosts(){
-        val collection = getString(R.string.collection_post_name)
-        viewModel.performGetLastPosts(collection,postsSuccessfulHandler)
+        viewModel.performGetLastPosts(postsSuccessfulHandler)
     }
 
     fun goToAddPost(){

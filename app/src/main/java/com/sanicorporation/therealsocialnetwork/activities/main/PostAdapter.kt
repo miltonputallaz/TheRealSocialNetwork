@@ -6,12 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.ToggleButton
 import androidx.recyclerview.widget.RecyclerView
 import com.sanicorporation.therealsocialnetwork.R
 import com.sanicorporation.therealsocialnetwork.models.Post
 import kotlinx.android.synthetic.main.post_item.view.*
 
-class PostAdapter(private var posts: ArrayList<Post>) :
+class PostAdapter(
+    private var posts: ArrayList<Post>,
+    val likedHandler: (likedId: String, liked: Boolean) -> Unit,
+    val selectedHandler: (post: Post) -> Unit,
+    val verifyLikedPost: (postId: String, setLikeHandler: (liked: Boolean) -> Unit ) -> Unit,
+    val getImageHandler: (imageUri: String, imageView: ImageView) -> Unit) :
     RecyclerView.Adapter<PostAdapter.MyViewHolder>() {
 
 
@@ -19,7 +25,9 @@ class PostAdapter(private var posts: ArrayList<Post>) :
         val title = view.post_title as TextView
         val message  = view.post_message as TextView
         val image = view.post_image as ImageView
+        val like = view.post_like as ToggleButton
     }
+
 
 
 
@@ -30,8 +38,29 @@ class PostAdapter(private var posts: ArrayList<Post>) :
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.title.text = posts[position].title
-        holder.message.text = posts[position].message
+        val post = posts[position]
+        val setLikeHandler: (isSelected: Boolean) -> Unit = {
+            holder.like.isChecked = it
+            holder.like.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    likedHandler(post.postId, true)
+                } else {
+                    likedHandler(post.postId, false)
+                }
+            }
+        }
+        verifyLikedPost(post.postId, setLikeHandler)
+        post.imageUri?.also {
+            getImageHandler(it, holder.image)
+        }
+
+
+        holder.itemView.setOnClickListener { selectedHandler(post) }
+        holder.title.text = post.title
+        holder.message.text = post.message
+
+
+
 
     }
 

@@ -1,17 +1,15 @@
 package com.sanicorporation.therealsocialnetwork.activities.login
 
 import android.content.Intent
-import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
-import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import com.sanicorporation.therealsocialnetwork.R
 import com.sanicorporation.therealsocialnetwork.activities.main.MainActivity
 import com.sanicorporation.therealsocialnetwork.activities.register.RegisterActivity
 import com.sanicorporation.therealsocialnetwork.databinding.ActivityLoginBinding
+import com.sanicorporation.therealsocialnetwork.utils.Keys
+import com.sanicorporation.therealsocialnetwork.utils.Preferences
 
 class LoginActivity : AppCompatActivity() {
 
@@ -20,8 +18,10 @@ class LoginActivity : AppCompatActivity() {
     private var loginViewModel: LoginViewModel = LoginViewModel()
 
 
-    private val handler: () -> Unit = {
+    private val handler: (uid: String?) -> Unit = {
+        Preferences.INSTANCE.addString(this, Keys.UID.toString(), it)
         goToMain()
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
     private fun goToMain(){
         val intent : Intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
 
