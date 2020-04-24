@@ -3,15 +3,18 @@ package com.sanicorporation.therealsocialnetwork.activities.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import com.sanicorporation.therealsocialnetwork.R
+import com.sanicorporation.therealsocialnetwork.activities.BaseActivity
 import com.sanicorporation.therealsocialnetwork.activities.main.MainActivity
 import com.sanicorporation.therealsocialnetwork.activities.register.RegisterActivity
 import com.sanicorporation.therealsocialnetwork.databinding.ActivityLoginBinding
 import com.sanicorporation.therealsocialnetwork.utils.Keys
 import com.sanicorporation.therealsocialnetwork.utils.Preferences
+import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var binding: ActivityLoginBinding
 
@@ -28,6 +31,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(
             this, R.layout.activity_login)
+        ViewCompat.setTranslationZ(progress_bar, 20.0f);
+
         setUpBinding()
     }
 
@@ -38,9 +43,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun onClickRegister(){
-        var intent : Intent = Intent(this, RegisterActivity::class.java)
+        var intent = Intent(this, RegisterActivity::class.java)
         startActivity(intent)
-        finish()
     }
 
     fun onClickLogin(){
@@ -49,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun goToMain(){
-        val intent : Intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }

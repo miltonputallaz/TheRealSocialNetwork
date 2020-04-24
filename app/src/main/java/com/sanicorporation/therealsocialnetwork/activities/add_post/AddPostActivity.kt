@@ -1,13 +1,14 @@
 package com.sanicorporation.therealsocialnetwork.activities.add_post
 
 
+import android.Manifest
+import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,25 +17,29 @@ import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import com.sanicorporation.therealsocialnetwork.R
+import com.sanicorporation.therealsocialnetwork.activities.BaseActivity
 import com.sanicorporation.therealsocialnetwork.databinding.ActivityAddPostBinding
-import com.sanicorporation.therealsocialnetwork.utils.FileCreator
+import com.sanicorporation.therealsocialnetwork.utils.FileUtils
 import com.sanicorporation.therealsocialnetwork.utils.PhotoModifier
 import kotlinx.android.synthetic.main.activity_add_post.*
 import kotlinx.android.synthetic.main.image_capture_dialog.view.*
 import java.io.File
 
 
-class AddPostActivity : AppCompatActivity() {
+class AddPostActivity : BaseActivity() {
 
+    private val READ_EXT_STORAGE_REQUEST = 2
     private lateinit var binding: ActivityAddPostBinding
 
     private var addPostViewModel: AddPostViewModel = AddPostViewModel()
 
     val REQUEST_IMAGE_CAPTURE = 1
+    val REQUEST_IMAGE_PICK = 2
     var imageFile: File? = null
 
 
@@ -93,6 +98,7 @@ class AddPostActivity : AppCompatActivity() {
     }
 
     fun onClickShare(){
+        progress_bar.bringToFront()
         addPostViewModel.performAddPost(sucessFullHandler, errorHandler)
     }
 
@@ -102,25 +108,83 @@ class AddPostActivity : AppCompatActivity() {
 
     private fun showCameraDialog() {
         lateinit var photoDialog: Dialog
-
         val builder = AlertDialog.Builder(this)
-        // Get the layout inflater
-        val inflater = layoutInflater;
-        var view = inflater.inflate(R.layout.image_capture_dialog, null)
+        var view = layoutInflater.inflate(R.layout.image_capture_dialog, null)
         view.select_image_button.setOnClickListener{
             photoDialog.dismiss()
-            selectImage()
+            checkReadPermission()
         }
         view.take_photo_button.setOnClickListener{
             photoDialog.dismiss()
             takePhoto()
         }
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
         builder.setView(view)
         photoDialog = builder.create()
         photoDialog.show()
+    }
 
+    private fun checkReadPermission(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                showReadExternalStorageExpl()
+            } else {
+                // No explanation needed, we can request the permission.
+                requestReadExternalPermission()
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            selectImage()
+        }
+
+    }
+
+    private fun requestReadExternalPermission(){
+        ActivityCompat.requestPermissions(this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            READ_EXT_STORAGE_REQUEST)
+    }
+
+    private fun showReadExternalStorageExpl() {
+        val builder = AlertDialog.Builder(this)
+        with(builder)
+        {
+            setTitle(R.string.permission_needded_title)
+            setMessage(R.string.read_external_storage_permission)
+            setPositiveButton(R.string.permission_needed_ok_button, DialogInterface.OnClickListener { dialog, which ->
+                requestReadExternalPermission()
+            })
+            setCancelable(false)
+            show()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            READ_EXT_STORAGE_REQUEST -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    selectImage()
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return
+            }
+
+            else -> {
+                // Ignore all other requests.
+            }
+        }
     }
 
 
@@ -129,7 +193,7 @@ class AddPostActivity : AppCompatActivity() {
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(packageManager)?.also {
                 // Create the File where the photo should go
-                imageFile = FileCreator.createImageFile(getExternalFilesDir(Environment.DIRECTORY_PICTURES))
+                imageFile = FileUtils.createImageFile(getExternalFilesDir(Environment.DIRECTORY_PICTURES))
                 // Continue only if the File was successfully created
                 imageFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
@@ -145,39 +209,43 @@ class AddPostActivity : AppCompatActivity() {
     }
 
     private fun selectImage(){
-        imageFile
+        Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI).also {
+            it.type = "image/*"
+            it.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(it, REQUEST_IMAGE_PICK)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK){
+            if (requestCode == REQUEST_IMAGE_CAPTURE){
 
-            rotateIfItsNeccesary()
-            if (imageFile!!.exists()) {
+                val completionHandler: () -> Unit = {setPostImage(BitmapFactory.decodeFile(imageFile!!.absolutePath))}
+
                 addPostViewModel.setImagePath(imageFile!!.absolutePath)
+                PhotoModifier.rotateIfItsNeccesary(imageFile!!,completionHandler)
+
+            } else if(requestCode == REQUEST_IMAGE_PICK) {
+                data?.data?.let {
+                    FileUtils.getRealPath(this,it)?.let {
+                        addPostViewModel.setImagePath(it)
+                        setPostImage(BitmapFactory.decodeFile(it))
+                    }
+                }
             }
         }
-    }
-
-    private fun rotateIfItsNeccesary() {
-        val exitInterface = ExifInterface(imageFile!!.path);
-        val orientation = exitInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-        when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(90.0f);
-            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(180.0f);
-            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(270.0f);
-            else -> setPostImage(BitmapFactory.decodeFile(imageFile!!.absolutePath))
-        }
 
     }
+
+
+
+
+
+
 
     private fun setPostImage(bitmap: Bitmap) {
-        post_image.setImageBitmap(bitmap)
-    }
-
-    private fun rotateImage(degrees: Float){
-       setPostImage(PhotoModifier.rotateImage(degrees,imageFile!!))
+        addPostViewModel.setImageBitmap(bitmap)
     }
 
 

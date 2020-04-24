@@ -4,14 +4,11 @@
     <item
         android:drawable="@drawable/ic_favourite_checked"
         android:state_checked="true"
-        android:color="@color/colorPrimaryDarkLight"
         />
     <!-- When not selected, use white-->
     <item
         android:drawable="@drawable/ic_favourite_unchecked"
         android:state_checked="false"
-        android:color="@color/colorPrimaryDarkLight"
-
         />
 
 </selector>

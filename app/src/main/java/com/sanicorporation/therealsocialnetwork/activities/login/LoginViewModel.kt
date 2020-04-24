@@ -18,8 +18,8 @@ class LoginViewModel : ViewModel() {
     }
 
     fun performLogin(handler : (uid:String?)-> Unit){
-        showLoading()
         if (email.value != null && password.value != null ){
+            showLoading()
             if (email.value!!.length > 0 && password.value!!.length > 0 ){
                 auth.signInWithEmailAndPassword(email.value!!, password.value!!)
                     .addOnCompleteListener { task ->

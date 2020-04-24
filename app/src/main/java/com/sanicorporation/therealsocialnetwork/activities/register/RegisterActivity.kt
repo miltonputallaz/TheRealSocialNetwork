@@ -4,9 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.sanicorporation.therealsocialnetwork.R
+import com.sanicorporation.therealsocialnetwork.activities.BaseActivity
 import com.sanicorporation.therealsocialnetwork.databinding.ActivityRegisterBinding
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : BaseActivity() {
 
     lateinit var binding: ActivityRegisterBinding
     lateinit var registerViewModel: RegisterViewModel

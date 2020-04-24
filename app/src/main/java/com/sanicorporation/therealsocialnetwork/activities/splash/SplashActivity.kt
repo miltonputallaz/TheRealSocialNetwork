@@ -4,10 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.sanicorporation.therealsocialnetwork.R
+import com.sanicorporation.therealsocialnetwork.activities.BaseActivity
 import com.sanicorporation.therealsocialnetwork.activities.login.LoginActivity
 import com.sanicorporation.therealsocialnetwork.activities.main.MainActivity
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     lateinit var splashViewModel: SplashViewModel
 

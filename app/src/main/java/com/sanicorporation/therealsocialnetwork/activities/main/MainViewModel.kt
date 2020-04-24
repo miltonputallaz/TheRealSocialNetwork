@@ -6,7 +6,13 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sanicorporation.therealsocialnetwork.models.Post
-import com.sanicorporation.therealsocialnetwork.utils.Keys
+import com.sanicorporation.therealsocialnetwork.models.PostId
+import com.sanicorporation.therealsocialnetwork.network.BaseService
+import com.sanicorporation.therealsocialnetwork.network.PostService
+import com.squareup.okhttp.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainViewModel : ViewModel() {
@@ -22,48 +28,65 @@ class MainViewModel : ViewModel() {
     }
 
     fun performGetLastPosts(getPostsHandler: (ArrayList<Post>) -> Unit){
-        firestore.collection(Keys.POSTS.toString())
-            .get()
-            .addOnSuccessListener { result ->
-                var collection: ArrayList<Post> = ArrayList()
-                for (document in result) {
-                    val post = Post.fromFirebase(document)
-                    collection.add(post)
-                }
-                getPostsHandler(collection)
-            }
-            .addOnFailureListener { exception ->
+
+        val postService = BaseService.retrofit.create(PostService::class.java)
+        postService.getAllPost().enqueue(object : Callback<ArrayList<Post>> {
+            override fun onFailure(call: Call<ArrayList<Post>>, t: Throwable) {
                 Log.d("","")
             }
 
-    }
-
-    fun performLike(uid: String?, postId: String, liked: Boolean) {
-        if (liked){
-            val like = hashMapOf(
-                "postId" to postId
-            )
-            firestore.collection(Keys.LIKES.toString()).document(uid.toString()).collection(Keys.POSTS.toString()).document(postId).set(like)
-        } else {
-            firestore.collection(Keys.LIKES.toString()).document(uid.toString()).collection(Keys.POSTS.toString()).document(postId).delete()
-        }
-
-    }
-
-    fun performVerifyPostLiked(postId: String, uid: String?, likeHandler: (liked: Boolean) -> Unit) {
-        val likesRef = firestore.collection(Keys.LIKES.toString()).document(uid.toString()).collection(Keys.POSTS.toString())
-        likesRef.whereEqualTo("postId", postId).get() .addOnSuccessListener { document ->
-            if (!document.documents.isEmpty()) {
-                likeHandler(true)
-            } else {
-                likeHandler(false)
+            override fun onResponse(
+                call: Call<ArrayList<Post>>,
+                response: retrofit2.Response<ArrayList<Post>>
+            ) {
+                response.body()?.let {
+                    getPostsHandler(it)
+                }
             }
-        }
-        .addOnFailureListener{
-            likeHandler(false)
+
+        })
+
+
+    }
+
+    fun performLike( postId: Long, liked: Boolean) {
+        if (liked){
+            likePost(postId)
+        } else {
+            unlikePost(postId)
         }
 
     }
+
+    private fun unlikePost(postId: Long) {
+
+        val postService = BaseService.retrofit.create(PostService::class.java)
+        postService.removeFromFavourites(PostId(postId)).enqueue(object : Callback<ResponseBody>{
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.d("","")
+            }
+
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("","" )
+            }
+
+        })
+    }
+
+    private fun likePost(postId: Long) {
+        val postService = BaseService.retrofit.create(PostService::class.java)
+        postService.addToFavourite(PostId(postId)).enqueue(object : Callback<ResponseBody>{
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.d("","")
+            }
+
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("","")
+            }
+
+        })
+    }
+
 
 
 }

@@ -2,4 +2,6 @@
 <resources>
     <attr name="defaultActivityBackground" format="reference"></attr>
     <attr name="defaultTextAndIconsColor" format="reference"></attr>
+    <attr name="defaultTransparentBackground" format="reference"></attr>
+    <attr name="defaultDisabledButton" format="reference"></attr>
 </resources>

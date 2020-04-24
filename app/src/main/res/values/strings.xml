@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">TheRealSocialNetwork</string>
 
+    <!--Main Activity-->
+    <string name="main_post_item_comment">Comentar</string>
+
     <!--Login Activity-->
     <string name="login_mail_hint">Ingrese email</string>
     <string name="login_password_hint">Ingrese contraseña</string>
@@ -22,9 +25,18 @@
     <string name="addpost_dialog_take_photo">Tomar una foto</string>
     <string name="addpost_dialog_open_gallery">Seleccionar imagen</string>
 
+    <!--Permission Explanations-->
+    <string name="permission_needded_title">Permisos</string>
+    <string name="permission_needed_ok_button">Aceptar</string>
+    <string name="read_external_storage_permission">Necesitamos que acepte los permisos de lectura de almacenamiento externo, para poder seleccionar un archivo.</string>
+
     <!--Common actions-->
     <string name="login_button_text">Ingresar</string>
     <string name="register_button_text">Registrarse</string>
     <string name="logout">Salir</string>
+    <string name="change_theme">Cambiar tema</string>
+
+
+
 
 </resources>

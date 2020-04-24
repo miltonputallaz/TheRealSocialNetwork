@@ -11,30 +11,27 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.sanicorporation.therealsocialnetwork.R
+import com.sanicorporation.therealsocialnetwork.activities.BaseActivity
 import com.sanicorporation.therealsocialnetwork.activities.add_post.AddPostActivity
 import com.sanicorporation.therealsocialnetwork.activities.login.LoginActivity
 import com.sanicorporation.therealsocialnetwork.databinding.ActivityMainBinding
 import com.sanicorporation.therealsocialnetwork.models.Post
+import com.sanicorporation.therealsocialnetwork.network.BaseService
 import com.sanicorporation.therealsocialnetwork.utils.Keys
 import com.sanicorporation.therealsocialnetwork.utils.Preferences
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
     private var viewModel: MainViewModel = MainViewModel()
 
-    private val likedHandler: (postId: String, liked: Boolean) -> Unit = { postId, liked ->
-        val uid = Preferences.INSTANCE.getString(this, Keys.UID.toString())
-        viewModel.performLike(uid, postId, liked)
-
+    private val likedHandler: (postId: Long, liked: Boolean) -> Unit = { postId, liked ->
+        viewModel.performLike( postId, liked)
     }
 
-    private val getLikeHandler: (postId: String, (liked: Boolean) -> Unit) -> Unit = { postId, setLikeHandler ->
-        val uid = Preferences.INSTANCE.getString(this, Keys.UID.toString())
-       viewModel.performVerifyPostLiked(postId, uid, setLikeHandler)
-    }
+
 
     private val selectedHandler: (post: Post) -> Unit = {
         Log.d("","")
@@ -54,20 +51,17 @@ class MainActivity : AppCompatActivity() {
         binding.refresh.isRefreshing = false
     }
 
-    private var postAdapter: PostAdapter = PostAdapter(ArrayList(), likedHandler, selectedHandler, getLikeHandler, getImageHandler)
-
-
-
+    private var postAdapter: PostAdapter = PostAdapter(ArrayList(), likedHandler, selectedHandler, getImageHandler)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
-
         setUpToolbar()
         setUpBinding()
         setUpRecyclerView()
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -122,11 +116,25 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        R.id.action_change_theme -> {
+            changeTheme()
+            true
+        }
+
         else -> {
             // If we got here, the user's action was not recognized.
             // Invoke the superclass to handle it.
             super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun changeTheme() {
+        val theme = Preferences.INSTANCE.getString(this,Keys.THEME_ID.toString())
+        if(theme == Keys.THEME_LIGHT.toString())
+            Preferences.INSTANCE.addString(this, Keys.THEME_ID.toString(), Keys.THEME_DARK.toString())
+        else
+            Preferences.INSTANCE.addString(this, Keys.THEME_ID.toString(),Keys.THEME_LIGHT.toString())
+        recreate()
     }
 
 }

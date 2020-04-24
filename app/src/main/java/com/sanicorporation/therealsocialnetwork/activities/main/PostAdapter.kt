@@ -14,9 +14,8 @@ import kotlinx.android.synthetic.main.post_item.view.*
 
 class PostAdapter(
     private var posts: ArrayList<Post>,
-    val likedHandler: (likedId: String, liked: Boolean) -> Unit,
+    val likedHandler: (likedId: Long, liked: Boolean) -> Unit,
     val selectedHandler: (post: Post) -> Unit,
-    val verifyLikedPost: (postId: String, setLikeHandler: (liked: Boolean) -> Unit ) -> Unit,
     val getImageHandler: (imageUri: String, imageView: ImageView) -> Unit) :
     RecyclerView.Adapter<PostAdapter.MyViewHolder>() {
 
@@ -26,6 +25,7 @@ class PostAdapter(
         val message  = view.post_message as TextView
         val image = view.post_image as ImageView
         val like = view.post_like as ToggleButton
+        val likeCount = view.like_counter as TextView
     }
 
 
@@ -39,29 +39,27 @@ class PostAdapter(
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val post = posts[position]
-        val setLikeHandler: (isSelected: Boolean) -> Unit = {
-            holder.like.isChecked = it
-            holder.like.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    likedHandler(post.postId, true)
-                } else {
-                    likedHandler(post.postId, false)
-                }
+        holder.like.isChecked = post.isFavourite
+
+        holder.like.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                likedHandler(post.postId!!, true)
+                holder.likeCount.text = (post.likeCount + 1).toString()
+            } else {
+               likedHandler(post.postId!!, false)
+                holder.likeCount.text = (post.likeCount - 1).toString()
             }
         }
-        verifyLikedPost(post.postId, setLikeHandler)
-        post.imageUri?.also {
+
+        post.imageUrl?.also {
             getImageHandler(it, holder.image)
         }
 
 
         holder.itemView.setOnClickListener { selectedHandler(post) }
         holder.title.text = post.title
-        holder.message.text = post.message
-
-
-
-
+        holder.message.text = post.description
+        holder.likeCount.text = post.likeCount.toString()
     }
 
     // Return the size of your dataset (invoked by the layout manager)

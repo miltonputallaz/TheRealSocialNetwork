@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#673AB7</color>
+    <color name="colorPrimaryDisabled">#9761F8</color>
     <color name="colorPrimaryDark">#512DA8</color>
     <color name="colorAccent">#009688</color>
     <color name="colorLightPrimary">#D1C4E9</color>
@@ -11,6 +12,7 @@
     <color name="lightBackColor">#FFFFFF</color>
 
     <color name="colorPrimaryLight">#30B12C</color>
+    <color name="colorPrimaryLightDisabled">#49EC44</color>
     <color name="colorPrimaryDarkLight">#1A6A24</color>
     <color name="colorAccentLight">#C8C61E</color>
     <color name="colorLightPrimaryLight">#D1C4E9</color>
@@ -19,5 +21,8 @@
     <color name="colorSecondaryTextLight">#757575</color>
     <color name="colorDividerLight">#BDBDBD</color>
     <color name="lightBackColorLight">#FFFFFF</color>
+
+
+    <color name="transparentBlack">#9A000000</color>
 
 </resources>
