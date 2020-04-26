@@ -13,7 +13,7 @@
     <string name="register_mail_hint">Ingrese email</string>
     <string name="register_password_hint">Ingrese contraseña</string>
     <string name="register_confirmation_password_hint">Confirme contraseña</string>
-    
+
     <!--AddPost Activity-->
     <string name="addpost_title_hint">Título</string>
     <string name="addpost_description_hint">Descripcion</string>
@@ -35,8 +35,6 @@
     <string name="register_button_text">Registrarse</string>
     <string name="logout">Salir</string>
     <string name="change_theme">Cambiar tema</string>
-
-
 
 
 </resources>

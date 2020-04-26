@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_margin="10dp"
+    card_view:cardCornerRadius="20dp"
+    card_view:cardElevation="20dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/default_card_view_padding">
+
+        <ImageView
+            android:id="@+id/post_image"
+            android:transitionName="post_image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_card_view_image_height"
+            android:adjustViewBounds="false"
+            android:src="@drawable/paisaje"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/post_title"
+            android:transitionName="post_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constraintTop_toBottomOf="@id/post_image"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/post_message"
+            android:transitionName="post_message"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constraintTop_toBottomOf="@id/post_title"
+            app:layout_constraintBottom_toTopOf="@id/post_like"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+
+        <!-- TODO -> CAMBIAR PROPIEDAD "android:backgroundTint" PARA FUNCIONAR EN API < 21-->
+        <androidx.appcompat.widget.AppCompatToggleButton
+            android:id="@+id/post_like"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/like_toggle"
+            android:backgroundTint="?attr/colorPrimary"
+            android:text="@null"
+            android:textOn="@null"
+            android:textOff="@null"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/like_counter"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/like_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/default_text_size_small"
+            android:text="29"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintLeft_toRightOf="@id/post_like"
+            app:layout_constraintRight_toLeftOf="@id/comment_button"
+            app:layout_constraintBaseline_toBaselineOf="@id/post_like"
+            />
+
+        <Button
+            android:id="@+id/comment_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_post_item_comment"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:theme="@style/SocialMediaButtonsBorderless"
+            app:layout_constraintLeft_toRightOf="@id/like_counter"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/like_counter"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

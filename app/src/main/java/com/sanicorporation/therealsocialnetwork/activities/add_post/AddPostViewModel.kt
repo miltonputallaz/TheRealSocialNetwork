@@ -2,28 +2,42 @@ package com.sanicorporation.therealsocialnetwork.activities.add_post
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.sanicorporation.therealsocialnetwork.models.CustomResponseBody
 import com.sanicorporation.therealsocialnetwork.models.Post
 import com.sanicorporation.therealsocialnetwork.network.BaseService
 import com.sanicorporation.therealsocialnetwork.network.PostService
 import com.sanicorporation.therealsocialnetwork.utils.Keys
-import com.squareup.okhttp.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Response
+
 
 import java.io.File
 
 @BindingAdapter("bind:imageBitmap")
 fun loadImage(iv: ImageView, bitmap: Bitmap?) {
-    bitmap.also {
+    bitmap.apply {
         iv.setImageBitmap(bitmap)
     }
 }
+
+@BindingAdapter("bind:visibiltyImage")
+fun imageVisibility(iv: ImageView, bitmap: Bitmap?) {
+    bitmap?.apply {
+        iv.visibility = View.VISIBLE
+        return
+    }
+    iv.visibility = View.GONE
+}
+
+
 
 class AddPostViewModel : ViewModel() {
 
@@ -70,21 +84,23 @@ class AddPostViewModel : ViewModel() {
     private fun uploadPost(success: () -> Unit, error: () -> Unit, url: String?) {
         val post = Post(title.value!!, description.value!!,0,url,null)
         val postService = BaseService.retrofit.create(PostService::class.java)
-        postService.addPost(post).enqueue(object : Callback<ResponseBody>{
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                showLoading.value = false
-                success()
-            }
-
-            override fun onResponse(
-                call: Call<ResponseBody>,
-                response: retrofit2.Response<ResponseBody>
-            ) {
+        postService.addPost(post).enqueue(object : Callback<CustomResponseBody>{
+            override fun onFailure(call: Call<CustomResponseBody>, t: Throwable) {
                 showLoading.value = false
                 error()
             }
 
+            override fun onResponse(call: Call<CustomResponseBody>, response: Response<CustomResponseBody>) {
+                showLoading.value = false
+                if (response.isSuccessful){
+                    success()
+                } else {
+                    error()
+                }
+            }
+
         })
+
 
     }
 

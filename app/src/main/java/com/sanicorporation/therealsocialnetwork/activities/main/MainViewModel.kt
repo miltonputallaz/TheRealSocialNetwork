@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.sanicorporation.therealsocialnetwork.models.CustomResponseBody
 import com.sanicorporation.therealsocialnetwork.models.Post
 import com.sanicorporation.therealsocialnetwork.models.PostId
 import com.sanicorporation.therealsocialnetwork.network.BaseService
@@ -61,12 +62,12 @@ class MainViewModel : ViewModel() {
     private fun unlikePost(postId: Long) {
 
         val postService = BaseService.retrofit.create(PostService::class.java)
-        postService.removeFromFavourites(PostId(postId)).enqueue(object : Callback<ResponseBody>{
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        postService.removeFromFavourites(PostId(postId)).enqueue(object : Callback<CustomResponseBody>{
+            override fun onFailure(call: Call<CustomResponseBody>, t: Throwable) {
                 Log.d("","")
             }
 
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            override fun onResponse(call: Call<CustomResponseBody>, response: Response<CustomResponseBody>) {
                 Log.d("","" )
             }
 
@@ -75,12 +76,12 @@ class MainViewModel : ViewModel() {
 
     private fun likePost(postId: Long) {
         val postService = BaseService.retrofit.create(PostService::class.java)
-        postService.addToFavourite(PostId(postId)).enqueue(object : Callback<ResponseBody>{
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        postService.addToFavourite(PostId(postId)).enqueue(object : Callback<CustomResponseBody>{
+            override fun onFailure(call: Call<CustomResponseBody>, t: Throwable) {
                 Log.d("","")
             }
 
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            override fun onResponse(call: Call<CustomResponseBody>, response: Response<CustomResponseBody>) {
                 Log.d("","")
             }
 

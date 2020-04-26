@@ -2,23 +2,25 @@ package com.sanicorporation.therealsocialnetwork.activities.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import androidx.core.util.Pair as UtilPair
 import com.sanicorporation.therealsocialnetwork.R
 import com.sanicorporation.therealsocialnetwork.activities.BaseActivity
 import com.sanicorporation.therealsocialnetwork.activities.add_post.AddPostActivity
 import com.sanicorporation.therealsocialnetwork.activities.login.LoginActivity
+import com.sanicorporation.therealsocialnetwork.activities.post_detail.PostDetailActivity
 import com.sanicorporation.therealsocialnetwork.databinding.ActivityMainBinding
 import com.sanicorporation.therealsocialnetwork.models.Post
-import com.sanicorporation.therealsocialnetwork.network.BaseService
 import com.sanicorporation.therealsocialnetwork.utils.Keys
 import com.sanicorporation.therealsocialnetwork.utils.Preferences
+import kotlinx.android.synthetic.main.post_item.view.*
 
 
 class MainActivity : BaseActivity() {
@@ -33,8 +35,8 @@ class MainActivity : BaseActivity() {
 
 
 
-    private val selectedHandler: (post: Post) -> Unit = {
-        Log.d("","")
+    private val selectedHandler: (view: View, post: Post) -> Unit = {view, post ->
+        goToDetail(view, post)
     }
 
     private val getImageHandler: (imageUri: String, imageView: ImageView) -> Unit = {uri, view ->
@@ -108,6 +110,16 @@ class MainActivity : BaseActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun goToDetail(view: View, post: Post){
+        val intent = Intent(this, PostDetailActivity::class.java)
+        intent.putExtra(PostDetailActivity.SELECTED_POST, post)
+        val p1 = UtilPair(view.post_image as View, "post_image")
+        val p2 = UtilPair(view.post_title as View, "post_title")
+        val p3 = UtilPair(view.post_message as View, "post_message")
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3)
+        startActivity(intent, options.toBundle())
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

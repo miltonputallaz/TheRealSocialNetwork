@@ -1,6 +1,7 @@
 package com.sanicorporation.therealsocialnetwork.models
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Post(
     val title: String,
@@ -13,7 +14,7 @@ data class Post(
     val postId: Long?,
     @SerializedName("favourite")
     val isFavourite: Boolean
-){
+):Serializable{
     constructor(
         title: String,
         description: String,

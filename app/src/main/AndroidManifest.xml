@@ -3,14 +3,15 @@
     package="com.sanicorporation.therealsocialnetwork">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-feature android:name="android.hardware.camera"
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE">
-
-    </uses-permission>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
 
     <application
         android:name=".CustomApplication"
@@ -20,6 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.post_detail.PostDetailActivity"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -28,16 +30,11 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths">
-
-            </meta-data>
+                android:resource="@xml/file_paths"></meta-data>
         </provider>
 
-        <activity android:name=".activities.add_post.AddPostActivity">
-        </activity>
-        <activity
-            android:name=".activities.splash.SplashActivity"
-            >
+        <activity android:name=".activities.add_post.AddPostActivity"></activity>
+        <activity android:name=".activities.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,13 +42,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.register.RegisterActivity" />
-        <activity
-            android:name=".activities.login.LoginActivity"
-            >
-        </activity>
-        <activity
-            android:name=".activities.main.MainActivity"
-            />
+        <activity android:name=".activities.login.LoginActivity"></activity>
+        <activity android:name=".activities.main.MainActivity" />
     </application>
 
 </manifest>

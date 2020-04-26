@@ -28,8 +28,7 @@
             android:layout_width="match_parent"
             android:theme="@style/CustomToolbar"
             app:layout_constraintTop_toTopOf="parent"
-            >
-        </androidx.appcompat.widget.Toolbar>
+            />
 
         <ScrollView
             android:id="@+id/scroll_view"
@@ -47,6 +46,7 @@
                     android:id="@+id/post_image"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
+                    bind:visibiltyImage="@{viewmodel.bitmap}"
                     bind:imageBitmap="@{viewmodel.bitmap}"
                     app:layout_constraintTop_toTopOf="parent"/>
 

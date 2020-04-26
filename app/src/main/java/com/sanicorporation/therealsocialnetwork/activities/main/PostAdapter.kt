@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.post_item.view.*
 class PostAdapter(
     private var posts: ArrayList<Post>,
     val likedHandler: (likedId: Long, liked: Boolean) -> Unit,
-    val selectedHandler: (post: Post) -> Unit,
+    val selectedHandler: (view: View, post: Post) -> Unit,
     val getImageHandler: (imageUri: String, imageView: ImageView) -> Unit) :
     RecyclerView.Adapter<PostAdapter.MyViewHolder>() {
 
@@ -51,15 +51,25 @@ class PostAdapter(
             }
         }
 
+        if (post.imageUrl != null) {
+            getImageHandler(post.imageUrl!!, holder.image)
+        } else {
+            holder.image.visibility = View.GONE
+        }
         post.imageUrl?.also {
             getImageHandler(it, holder.image)
         }
 
 
-        holder.itemView.setOnClickListener { selectedHandler(post) }
+        holder.itemView.setOnClickListener { selectedHandler(holder.itemView, post) }
         holder.title.text = post.title
         holder.message.text = post.description
         holder.likeCount.text = post.likeCount.toString()
+    }
+
+    override fun onViewDetachedFromWindow(holder: MyViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holder.like.setOnCheckedChangeListener(null)
     }
 
     // Return the size of your dataset (invoked by the layout manager)

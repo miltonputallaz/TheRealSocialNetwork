@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="defaultActivityBackground">@color/lightBackColor</item>
+        <item name="defaultTextAndIconsColor">@color/colorTextIcons</item>
+        <item name="defaultTransparentBackground">@color/transparentBlack</item>
+        <item name="defaultDisabledButton">@color/colorPrimaryDisabled</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:progressBarStyle">@style/CustomProgressBar</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkLight</item>
+        <item name="colorAccent">@color/colorAccentLight</item>
+        <item name="defaultActivityBackground">@color/lightBackColorLight</item>
+        <item name="defaultTextAndIconsColor">@color/colorTextIconsLight</item>
+        <item name="defaultTransparentBackground">@color/transparentBlack</item>
+        <item name="defaultDisabledButton">@color/colorPrimaryLightDisabled</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:progressBarStyle">@style/CustomProgressBar</item>
+    </style>
+
     <style name="SocialMediaButtons" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">?attr/defaultTextAndIconsColor</item>
         <item name="android:colorAccent">?attr/colorPrimary</item>
