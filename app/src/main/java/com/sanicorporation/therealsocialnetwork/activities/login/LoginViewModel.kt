@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.sanicorporation.therealsocialnetwork.utils.ValidationUtil
 
 
 class LoginViewModel : ViewModel() {
@@ -17,25 +18,27 @@ class LoginViewModel : ViewModel() {
         showLoading.value = false
     }
 
-    fun performLogin(handler : (uid:String?)-> Unit){
-        if (email.value != null && password.value != null ){
-            showLoading()
-            if (email.value!!.length > 0 && password.value!!.length > 0 ){
-                auth.signInWithEmailAndPassword(email.value!!, password.value!!)
-                    .addOnCompleteListener { task ->
-                        hideLoading()
-                        if (task.isSuccessful) {
-                            handler(task.result?.user?.uid)
-                        } else {
-                            Log.d("","")
-                        }
+    fun performLogin(handler : (uid:String?)-> Unit, errorHandler: (error: String) -> Unit){
 
-                        // ...
+        if (validateInputs(email.value, password.value)){
+            showLoading()
+            auth.signInWithEmailAndPassword(email.value!!, password.value!!)
+                .addOnCompleteListener { task ->
+                    hideLoading()
+                    if (task.isSuccessful) {
+                        handler(task.result?.user?.uid)
+                    } else {
+                        Log.d("","")
                     }
-            } else {
-            }
+
+                    // ...
+                }
         } else {
         }
+    }
+
+    private fun validateInputs(email : String?, pass : String?) : Boolean {
+        return ValidationUtil.passwordIsValid(pass) && ValidationUtil.emailIsValid(email)
     }
 
     fun showLoading(){

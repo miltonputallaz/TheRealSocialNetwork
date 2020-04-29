@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools">
     <data>
         <variable
             name="handler"
@@ -27,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:id="@+id/refresh"
+                bind:refreshing="@{viewmodel.isRefreshing}"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
                 app:layout_constraintBottom_toBottomOf="parent">
 
@@ -34,6 +36,7 @@
                     android:id="@+id/posts_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    bind:adapter="@{viewmodel.posts}"
                     />
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

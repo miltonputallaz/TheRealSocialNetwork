@@ -27,6 +27,10 @@ class LoginActivity : BaseActivity() {
 
     }
 
+    private val errorHandler: (error: String) -> Unit = {
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(
@@ -48,7 +52,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun onClickLogin(){
-        loginViewModel.performLogin(handler)
+        loginViewModel.performLogin(handler,errorHandler)
     }
 
 

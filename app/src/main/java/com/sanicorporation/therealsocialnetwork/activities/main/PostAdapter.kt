@@ -43,12 +43,14 @@ class PostAdapter(
 
         holder.like.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
+                post.likeCount += 1
                 likedHandler(post.postId!!, true)
-                holder.likeCount.text = (post.likeCount + 1).toString()
             } else {
-               likedHandler(post.postId!!, false)
-                holder.likeCount.text = (post.likeCount - 1).toString()
+                post.likeCount -= 1
+                likedHandler(post.postId!!, false)
             }
+            holder.likeCount.text = (post.likeCount).toString()
+
         }
 
         if (post.imageUrl != null) {
@@ -75,7 +77,7 @@ class PostAdapter(
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = posts.size
 
-    fun setPosts(posts: ArrayList<Post>){
+    fun setPosts(posts: ArrayList<Post>) {
         this.posts = posts
         notifyDataSetChanged()
     }

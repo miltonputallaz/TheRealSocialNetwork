@@ -78,7 +78,7 @@ class AddPostActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
-        onBackPressed()
+        goToMain(Activity.RESULT_CANCELED)
         return true
     }
 
@@ -94,7 +94,7 @@ class AddPostActivity : BaseActivity() {
     }
 
     private val positiveButtonClick = { dialog: DialogInterface, which: Int ->
-        goToMain()
+        goToMain(Activity.RESULT_OK)
     }
 
     fun onClickShare(){
@@ -249,7 +249,8 @@ class AddPostActivity : BaseActivity() {
     }
 
 
-    private fun goToMain(){
+    private fun goToMain(code: Int){
+        setResult(code)
         onBackPressed()
     }
 

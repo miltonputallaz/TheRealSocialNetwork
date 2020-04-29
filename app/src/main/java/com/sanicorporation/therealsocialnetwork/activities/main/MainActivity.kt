@@ -1,5 +1,6 @@
 package com.sanicorporation.therealsocialnetwork.activities.main
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -8,7 +9,9 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.app.ActivityOptionsCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import androidx.core.util.Pair as UtilPair
 import com.sanicorporation.therealsocialnetwork.R
@@ -23,11 +26,14 @@ import com.sanicorporation.therealsocialnetwork.utils.Preferences
 import kotlinx.android.synthetic.main.post_item.view.*
 
 
+
 class MainActivity : BaseActivity() {
+
+    private val ADD_ITEM_REQUEST = 200
 
     private lateinit var binding: ActivityMainBinding
 
-    private var viewModel: MainViewModel = MainViewModel()
+    private lateinit var viewModel: MainViewModel
 
     private val likedHandler: (postId: Long, liked: Boolean) -> Unit = { postId, liked ->
         viewModel.performLike( postId, liked)
@@ -48,12 +54,6 @@ class MainActivity : BaseActivity() {
         goToLogin()
     }
 
-    private val postsSuccessfulHandler: (ArrayList<Post>) -> Unit = {
-        postAdapter.setPosts(it)
-        binding.refresh.isRefreshing = false
-    }
-
-    private var postAdapter: PostAdapter = PostAdapter(ArrayList(), likedHandler, selectedHandler, getImageHandler)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,30 +65,36 @@ class MainActivity : BaseActivity() {
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        getLastPosts()
-    }
 
     private fun setUpToolbar(){
         setSupportActionBar(binding.toolbar)
     }
 
     private fun setUpBinding(){
+        binding.lifecycleOwner = this
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         binding.viewmodel = viewModel
         binding.handler = this
-        binding.lifecycleOwner = this
     }
 
     private fun setUpRecyclerView(){
         val viewManager = LinearLayoutManager(this)
         binding.postsRecyclerView.apply {
             layoutManager = viewManager
-            adapter = postAdapter
+            adapter = PostAdapter(ArrayList(), likedHandler, selectedHandler, getImageHandler)
         }
         binding.refresh.setOnRefreshListener{
+            viewModel.isRefreshing(true)
+            viewModel.resetOffset()
             getLastPosts()
         }
+
+        binding.postsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                recyclerView.layoutManager
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -98,12 +104,18 @@ class MainActivity : BaseActivity() {
 
 
     private fun getLastPosts(){
-        viewModel.performGetLastPosts(postsSuccessfulHandler)
+        viewModel.performGetLastPosts()
     }
 
     fun goToAddPost(){
         val intent = Intent(this, AddPostActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent,ADD_ITEM_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ADD_ITEM_REQUEST && resultCode == Activity.RESULT_OK)
+            getLastPosts()
     }
 
     private fun goToLogin(){

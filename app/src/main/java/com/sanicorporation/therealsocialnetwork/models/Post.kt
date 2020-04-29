@@ -7,7 +7,7 @@ data class Post(
     val title: String,
     val description: String,
     @SerializedName("likedcount")
-    val likeCount: Int,
+    var likeCount: Int,
     @SerializedName("imageurl")
     val imageUrl: String?,
     @SerializedName("id")

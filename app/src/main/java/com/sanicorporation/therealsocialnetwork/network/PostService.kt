@@ -8,6 +8,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface  PostService {
 
@@ -15,11 +16,11 @@ interface  PostService {
     fun addPost(@Body post: Post): Call<CustomResponseBody>
 
     @GET("post/all")
-    fun getAllPost(): Call<ArrayList<Post>>
+    fun getAllPost(@Query("offset") offset: Int): Call<ArrayList<Post>>
 
-    @POST("post/addtofavourite")
+    @POST("favourite/add")
     fun addToFavourite(@Body postId: PostId): Call<CustomResponseBody>
 
-    @POST("post/removefromfavourites")
+    @POST("favourite/remove")
     fun removeFromFavourites(@Body postId: PostId): Call<CustomResponseBody>
 }
