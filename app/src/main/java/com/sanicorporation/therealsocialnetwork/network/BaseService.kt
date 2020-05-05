@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class BaseService {
     companion object {
-        private  val BASE_URL = "http://192.168.1.14:3000/"
+        private  val BASE_URL = "http://192.168.1.6:3001/"
 
         val client = OkHttpClient
             .Builder()

@@ -53,13 +53,10 @@ class PostAdapter(
 
         }
 
-        if (post.imageUrl != null) {
-            getImageHandler(post.imageUrl!!, holder.image)
-        } else {
-            holder.image.visibility = View.GONE
-        }
-        post.imageUrl?.also {
+        post.imageUrl?.let {
             getImageHandler(it, holder.image)
+        }?:run {
+            holder.image.visibility  = View.GONE
         }
 
 
