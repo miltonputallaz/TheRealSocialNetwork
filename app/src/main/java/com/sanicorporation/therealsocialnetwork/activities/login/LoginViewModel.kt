@@ -9,29 +9,15 @@ import com.sanicorporation.therealsocialnetwork.utils.ValidationUtil
 
 
 class LoginViewModel : ViewModel() {
-    private var email: MutableLiveData<String> = MutableLiveData()
-    private var password: MutableLiveData<String> = MutableLiveData()
-    private var loading: MutableLiveData<Boolean> = MutableLiveData()
+    var email: MutableLiveData<String> = MutableLiveData()
+    var password: MutableLiveData<String> = MutableLiveData()
+    var loading: MutableLiveData<Boolean> = MutableLiveData()
 
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     init {
         loading.value = false
     }
-
-    fun getEmail(): LiveData<String> = email
-
-    fun setEmail(email: String){
-        this.email.value = email
-    }
-
-    fun password(): LiveData<String> = password
-
-    fun password(pass: String){
-        this.password.value = pass
-    }
-
-    fun loading(): LiveData<Boolean> = loading
 
 
     fun performLogin(handler : (uid:String?)-> Unit, errorHandler: (error: String) -> Unit){

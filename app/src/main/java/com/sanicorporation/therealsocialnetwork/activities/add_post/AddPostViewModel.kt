@@ -7,19 +7,15 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.sanicorporation.therealsocialnetwork.models.CustomResponseBody
+import com.sanicorporation.therealsocialnetwork.CustomApplication
 import com.sanicorporation.therealsocialnetwork.models.Post
-import com.sanicorporation.therealsocialnetwork.network.BaseService
-import com.sanicorporation.therealsocialnetwork.network.PostService
+import com.sanicorporation.therealsocialnetwork.repository.PostRepository
 import com.sanicorporation.therealsocialnetwork.utils.Keys
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 import java.io.File
+import javax.inject.Inject
 
 @BindingAdapter("bind:imageBitmap")
 fun loadImage(iv: ImageView, bitmap: Bitmap?) {
@@ -44,15 +40,20 @@ class AddPostViewModel : ViewModel() {
     var title: MutableLiveData<String> = MutableLiveData()
     var description: MutableLiveData<String> = MutableLiveData()
     var hasCamera: MutableLiveData<Boolean> = MutableLiveData()
-    var showLoading: MutableLiveData<Boolean> = MutableLiveData()
+    var showLoading: MutableLiveData<Boolean> = MutableLiveData(false)
     var bitmap: MutableLiveData<Bitmap> = MutableLiveData()
 
-    private val firestore = FirebaseFirestore.getInstance()
-    lateinit var storage: FirebaseStorage
     lateinit var photoPath: String
 
+    @Inject
+    lateinit var postRepository: PostRepository
+
     init {
-        showLoading.value = false
+        CustomApplication
+            .component
+            .addPostComponent()
+            .build()
+            .inject(this)
         bitmap.value = null
     }
 
@@ -83,23 +84,16 @@ class AddPostViewModel : ViewModel() {
 
     private fun uploadPost(success: () -> Unit, error: () -> Unit, url: String?) {
         val post = Post(title.value!!, description.value!!,0,url,null)
-        val postService = BaseService.retrofit.create(PostService::class.java)
-        postService.addPost(post).enqueue(object : Callback<CustomResponseBody>{
-            override fun onFailure(call: Call<CustomResponseBody>, t: Throwable) {
-                showLoading.value = false
-                error()
-            }
-
-            override fun onResponse(call: Call<CustomResponseBody>, response: Response<CustomResponseBody>) {
-                showLoading.value = false
-                if (response.isSuccessful){
-                    success()
-                } else {
-                    error()
-                }
-            }
-
-        })
+        showLoading(true)
+        val success: () -> Unit = {
+            showLoading(false)
+            success()
+        }
+        val error: (error: String) -> Unit = {
+            showLoading(false)
+            error()
+        }
+        postRepository.addPost(post, success, error)
 
 
     }
@@ -144,6 +138,10 @@ class AddPostViewModel : ViewModel() {
 
     fun setImageBitmap(bitmap: Bitmap) {
         this.bitmap.value = bitmap
+    }
+
+    private fun showLoading(show: Boolean){
+        showLoading.value = show
     }
 
 }

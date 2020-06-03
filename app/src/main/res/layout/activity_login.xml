@@ -20,7 +20,7 @@
         <include
             android:id="@+id/progress_bar"
             layout="@layout/loading"
-            android:visibility="@{viewmodel.loading() ? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewmodel.loading ? View.VISIBLE : View.GONE}"
             />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -79,7 +79,7 @@
                 android:text="@string/login_button_text"
                 android:layout_marginHorizontal="@dimen/default_horizontal_margin"
                 android:theme="@style/SocialMediaButtons"
-                android:enabled="@{!viewmodel.loading()}"
+                android:enabled="@{!viewmodel.loading}"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:onClick="@{() -> handler.onClickLogin()}"
                 app:layout_constraintTop_toBottomOf="@id/password_layout"
@@ -97,7 +97,7 @@
                 android:layout_marginHorizontal="@dimen/default_horizontal_margin"
                 android:theme="@style/SocialMediaButtons"
                 style="@style/Widget.AppCompat.Button.Colored"
-                android:enabled="@{!viewmodel.loading()}"
+                android:enabled="@{!viewmodel.loading}"
                 android:onClick="@{() -> handler.onClickRegister()}"
                 app:layout_constraintTop_toBottomOf="@id/login_button"
                 app:layout_constraintLeft_toLeftOf="parent"

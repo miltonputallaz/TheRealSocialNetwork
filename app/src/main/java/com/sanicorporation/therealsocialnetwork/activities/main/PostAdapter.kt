@@ -13,7 +13,7 @@ import com.sanicorporation.therealsocialnetwork.models.Post
 import kotlinx.android.synthetic.main.post_item.view.*
 
 class PostAdapter(
-    private var posts: ArrayList<Post>,
+    private var posts: List<Post>,
     val likedHandler: (likedId: Long, liked: Boolean) -> Unit,
     val selectedHandler: (view: View, post: Post) -> Unit,
     val getImageHandler: (imageUri: String, imageView: ImageView) -> Unit) :
@@ -54,6 +54,7 @@ class PostAdapter(
         }
 
         post.imageUrl?.let {
+            holder.image.visibility = View.VISIBLE
             getImageHandler(it, holder.image)
         }?:run {
             holder.image.visibility  = View.GONE
@@ -74,7 +75,7 @@ class PostAdapter(
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = posts.size
 
-    fun setPosts(posts: ArrayList<Post>) {
+    fun setPosts(posts: List<Post>) {
         this.posts = posts
         notifyDataSetChanged()
     }

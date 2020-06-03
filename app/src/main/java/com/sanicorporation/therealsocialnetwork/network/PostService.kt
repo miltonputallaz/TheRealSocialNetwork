@@ -16,7 +16,7 @@ interface  PostService {
     fun addPost(@Body post: Post): Call<CustomResponseBody>
 
     @GET("post/all")
-    fun getAllPost(@Query("offset") offset: Int): Call<ArrayList<Post>>
+    fun getAllPost(@Query("offset") offset: Int): Call<List<Post>>
 
     @POST("favourite/add")
     fun addToFavourite(@Body postId: PostId): Call<CustomResponseBody>

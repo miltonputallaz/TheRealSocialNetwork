@@ -23,6 +23,7 @@ import com.sanicorporation.therealsocialnetwork.databinding.ActivityMainBinding
 import com.sanicorporation.therealsocialnetwork.models.Post
 import com.sanicorporation.therealsocialnetwork.utils.Keys
 import com.sanicorporation.therealsocialnetwork.utils.Preferences
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.post_item.view.*
 
 
@@ -38,8 +39,6 @@ class MainActivity : BaseActivity() {
     private val likedHandler: (postId: Long, liked: Boolean) -> Unit = { postId, liked ->
         viewModel.performLike( postId, liked)
     }
-
-
 
     private val selectedHandler: (view: View, post: Post) -> Unit = {view, post ->
         goToDetail(view, post)
@@ -59,6 +58,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        progress_bar.bringToFront()
         setUpToolbar()
         setUpBinding()
         setUpRecyclerView()
@@ -84,7 +84,6 @@ class MainActivity : BaseActivity() {
             adapter = PostAdapter(ArrayList(), likedHandler, selectedHandler, getImageHandler)
         }
         binding.refresh.setOnRefreshListener{
-            viewModel.isRefreshing(true)
             viewModel.resetOffset()
             getLastPosts()
         }

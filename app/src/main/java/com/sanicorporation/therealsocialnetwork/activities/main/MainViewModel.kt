@@ -1,7 +1,6 @@
 package com.sanicorporation.therealsocialnetwork.activities.main
 
 
-import android.util.Log
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,17 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.sanicorporation.therealsocialnetwork.models.CustomResponseBody
+import com.sanicorporation.therealsocialnetwork.CustomApplication
 import com.sanicorporation.therealsocialnetwork.models.Post
 import com.sanicorporation.therealsocialnetwork.models.PostId
-import com.sanicorporation.therealsocialnetwork.network.BaseService
-import com.sanicorporation.therealsocialnetwork.network.PostService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.sanicorporation.therealsocialnetwork.repository.PostRepository
+import javax.inject.Inject
 
 @BindingAdapter("bind:adapter")
-fun rvAdapter(rv: RecyclerView, posts: LiveData<ArrayList<Post>>) {
+fun rvAdapter(rv: RecyclerView, posts: LiveData<List<Post>>) {
     posts.value?.apply {
         val adapter = rv.adapter as PostAdapter
         adapter.setPosts(this)
@@ -36,13 +32,15 @@ fun refresherHandler(srLayout: SwipeRefreshLayout, isRefreshing: LiveData<Boolea
 
 class MainViewModel : ViewModel() {
 
-    private var isRefreshing: MutableLiveData<Boolean> = MutableLiveData()
-    private val posts: MutableLiveData<ArrayList<Post>> by lazy {
-        MutableLiveData<ArrayList<Post>>().also {
-            performGetLastPosts()
-        }
+    var isRefreshing: MutableLiveData<Boolean> = MutableLiveData(false)
+    var swipeRefresh: MutableLiveData<Boolean> = MutableLiveData(false)
+    val posts: LiveData<List<Post>> by lazy {
+        showLoading(true)
+        performGetLastPosts()
     }
 
+    @Inject
+    lateinit var postRepository: PostRepository
 
     private val auth = FirebaseAuth.getInstance()
     private var page: Int = 0
@@ -50,26 +48,12 @@ class MainViewModel : ViewModel() {
 
 
     init {
-        isRefreshing.value = false
+        CustomApplication
+            .component
+            .mainComponent()
+            .build()
+            .inject(this)
     }
-
-    fun isRefreshing():LiveData<Boolean>{
-        return isRefreshing
-    }
-
-    fun isRefreshing(isRefreshing: Boolean){
-        this.isRefreshing.value = isRefreshing
-    }
-
-    fun posts():LiveData<ArrayList<Post>>{
-        return posts
-    }
-
-    fun posts(posts: ArrayList<Post>){
-        this.posts.value = posts
-    }
-
-
 
 
     fun performLogOut(logoutHandler: () -> Unit) {
@@ -77,31 +61,19 @@ class MainViewModel : ViewModel() {
         logoutHandler()
     }
 
-    fun performGetLastPosts(){
-        val postService = BaseService.retrofit.create(PostService::class.java)
-        postService.getAllPost(page*incrementCoefficient).enqueue(object : Callback<ArrayList<Post>> {
-            override fun onFailure(call: Call<ArrayList<Post>>, t: Throwable) {
-                Log.d("","")
-            }
-
-            override fun onResponse(
-                call: Call<ArrayList<Post>>,
-                response: retrofit2.Response<ArrayList<Post>>
-            ) {
-                response.body()?.let {
-                    isRefreshing.value = false
-                    if (page == 0)
-                        posts.value = it
-                    else
-                        posts.value!!.addAll(it)
-
-                    if (it.size == incrementCoefficient) incrementOffset()
-                }
-            }
-
-        })
+    fun performGetLastPosts(): LiveData<List<Post>> {
 
 
+        val success: () -> Unit = {
+            showLoading(false)
+            showSwipeLoading(false)
+        }
+
+        val error: (error: String) -> Unit = {
+            showLoading(false)
+            showSwipeLoading(false)
+        }
+        return postRepository.getLastPosts(page*incrementCoefficient, success, error)
     }
 
     fun performLike( postId: Long, liked: Boolean) {
@@ -110,36 +82,14 @@ class MainViewModel : ViewModel() {
         } else {
             unlikePost(postId)
         }
-
     }
 
     private fun unlikePost(postId: Long) {
-
-        val postService = BaseService.retrofit.create(PostService::class.java)
-        postService.removeFromFavourites(PostId(postId)).enqueue(object : Callback<CustomResponseBody>{
-            override fun onFailure(call: Call<CustomResponseBody>, t: Throwable) {
-                Log.d("","")
-            }
-
-            override fun onResponse(call: Call<CustomResponseBody>, response: Response<CustomResponseBody>) {
-                Log.d("","" )
-            }
-
-        })
+        postRepository.unlikePost(PostId(postId))
     }
 
     private fun likePost(postId: Long) {
-        val postService = BaseService.retrofit.create(PostService::class.java)
-        postService.addToFavourite(PostId(postId)).enqueue(object : Callback<CustomResponseBody>{
-            override fun onFailure(call: Call<CustomResponseBody>, t: Throwable) {
-                Log.d("","")
-            }
-
-            override fun onResponse(call: Call<CustomResponseBody>, response: Response<CustomResponseBody>) {
-                Log.d("","")
-            }
-
-        })
+        postRepository.likePost(PostId(postId))
     }
 
     fun resetOffset(){
@@ -148,6 +98,14 @@ class MainViewModel : ViewModel() {
 
     private fun incrementOffset(){
         page += 1
+    }
+
+    private fun showLoading(show: Boolean){
+        isRefreshing.value = show
+    }
+
+    private fun showSwipeLoading(show: Boolean){
+        swipeRefresh.value = show
     }
 
 

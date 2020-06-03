@@ -1,20 +1,21 @@
 package com.sanicorporation.therealsocialnetwork
 
 import android.app.Application
-import com.sanicorporation.therealsocialnetwork.network.BaseService
-import com.sanicorporation.therealsocialnetwork.utils.Preferences
+import com.sanicorporation.therealsocialnetwork.di.component.ApplicationComponent
+import com.sanicorporation.therealsocialnetwork.di.component.DaggerApplicationComponent
 
 class CustomApplication : Application() {
 
 
     companion object{
         lateinit var instance: Application
+        lateinit var component: ApplicationComponent
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        val inst  = Preferences.INSTANCE
+        component = DaggerApplicationComponent.builder().application(instance as CustomApplication).build()
     }
 
 }

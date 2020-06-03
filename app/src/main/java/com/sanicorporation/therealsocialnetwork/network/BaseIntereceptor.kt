@@ -1,11 +1,9 @@
 package com.sanicorporation.therealsocialnetwork.network
 
-import android.util.Log
 import com.sanicorporation.therealsocialnetwork.CustomApplication
 import com.sanicorporation.therealsocialnetwork.utils.Keys
 import com.sanicorporation.therealsocialnetwork.utils.Preferences
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 
 class BaseInterceptor : Interceptor {
