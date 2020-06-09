@@ -10,7 +10,7 @@ import com.sanicorporation.therealsocialnetwork.models.Post
 @Dao
 interface PostDao {
     @Insert(onConflict = REPLACE)
-    fun save(post: Post)
+    suspend fun save(post: Post)
 
     @Insert(onConflict = REPLACE)
     suspend fun saveAll(posts: List<Post>)

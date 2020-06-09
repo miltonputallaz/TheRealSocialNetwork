@@ -9,10 +9,14 @@ import com.sanicorporation.therealsocialnetwork.network.PostService
 import com.sanicorporation.therealsocialnetwork.persistence.post.PostDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,32 +24,37 @@ import javax.inject.Singleton
 open class PostRepository @Inject constructor(
     private val remoteSource: PostService,
     private val localSource: PostDao
-) {
+): PostRepositoryInterface {
 
-    fun getLastPosts(offset: Int, success: () -> Unit, error: (error: String) -> Unit): LiveData<List<Post>>{
+    override suspend fun getLastPosts(offset: Int, success: () -> Unit, error: (error: String) -> Unit): LiveData<List<Post>>{
         refreshPosts(offset,success, error)
         return localSource.getLastPost()
     }
 
-    private fun refreshPosts(offset: Int, success: () -> Unit, error: (error: String) -> Unit){
-        remoteSource.getAllPost(offset).enqueue(object : Callback<List<Post>>{
-            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                error("Error")
-            }
+    override suspend fun refreshPosts(offset: Int, success: () -> Unit, error: (error: String) -> Unit){
 
-            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
-                if (response.isSuccessful){
+        try {
+            val data = remoteSource.getAllPost(offset).execute()
+            if (data.isSuccessful){
+                withContext(Main){
                     success()
-                    CoroutineScope(IO).launch {
-                        localSource.saveAll(response.body()!!)
-                    }
-                } else {
+                }
+                data.body()?.run {
+                    localSource.saveAll(this)
+                }
+            } else {
+                withContext(Main){
                     error("Error")
                 }
-
             }
+        } catch (exception: Exception){
+            withContext(Main){
+                error("Error")
+            }
+        }
 
-        })
+
+
 
 
     }

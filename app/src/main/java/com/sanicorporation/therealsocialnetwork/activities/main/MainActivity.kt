@@ -103,7 +103,7 @@ class MainActivity : BaseActivity() {
 
 
     private fun getLastPosts(){
-        viewModel.performGetLastPosts()
+        viewModel.refreshData()
     }
 
     fun goToAddPost(){

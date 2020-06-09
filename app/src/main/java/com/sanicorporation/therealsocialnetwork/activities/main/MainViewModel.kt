@@ -2,9 +2,7 @@ package com.sanicorporation.therealsocialnetwork.activities.main
 
 
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -12,7 +10,13 @@ import com.sanicorporation.therealsocialnetwork.CustomApplication
 import com.sanicorporation.therealsocialnetwork.models.Post
 import com.sanicorporation.therealsocialnetwork.models.PostId
 import com.sanicorporation.therealsocialnetwork.repository.PostRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 @BindingAdapter("bind:adapter")
 fun rvAdapter(rv: RecyclerView, posts: LiveData<List<Post>>) {
@@ -34,10 +38,11 @@ class MainViewModel : ViewModel() {
 
     var isRefreshing: MutableLiveData<Boolean> = MutableLiveData(false)
     var swipeRefresh: MutableLiveData<Boolean> = MutableLiveData(false)
-    val posts: LiveData<List<Post>> by lazy {
+    val posts: MediatorLiveData<List<Post>> = liveData(context = viewModelScope.coroutineContext + Main) {
         showLoading(true)
-        performGetLastPosts()
-    }
+        val posts = performGetLastPosts()
+        emitSource(posts)
+    } as MediatorLiveData<List<Post>>
 
     @Inject
     lateinit var postRepository: PostRepository
@@ -61,9 +66,7 @@ class MainViewModel : ViewModel() {
         logoutHandler()
     }
 
-    fun performGetLastPosts(): LiveData<List<Post>> {
-
-
+    fun performGetLastPosts(): LiveData<List<Post>> = liveData(context = viewModelScope.coroutineContext + IO) {
         val success: () -> Unit = {
             showLoading(false)
             showSwipeLoading(false)
@@ -73,8 +76,17 @@ class MainViewModel : ViewModel() {
             showLoading(false)
             showSwipeLoading(false)
         }
-        return postRepository.getLastPosts(page*incrementCoefficient, success, error)
+        emitSource(postRepository.getLastPosts(page*incrementCoefficient, success, error))
     }
+
+
+
+    fun refreshData(){
+        posts.addSource(performGetLastPosts(), {})
+    }
+
+
+
 
     fun performLike( postId: Long, liked: Boolean) {
         if (liked){
